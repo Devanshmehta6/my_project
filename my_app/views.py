@@ -1,5 +1,5 @@
 # from io import BytesIO
-# import cv2
+import cv2
 from django.http import HttpResponse, JsonResponse
 # import numpy as np
 from rest_framework.decorators import action, api_view
@@ -109,14 +109,14 @@ class FileOperationsViewSet(viewsets.ViewSet):
                 return response
     
     
-    # @action(detail=False, methods=['post'])
-    # def detect_face(self, request):
-    #     images = request.FILES.getlist('images')
-    #     processed_images = []
+    @action(detail=False, methods=['post'])
+    def detect_face(self, request):
+        images = request.FILES.getlist('images')
+        processed_images = []
 
-    #     # Load the pre-trained face detection model
-    #     face_cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-    #     face_cascade = cv2.CascadeClassifier(face_cascade_path)
+        # Load the pre-trained face detection model
+        face_cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+        face_cascade = cv2.CascadeClassifier(face_cascade_path)
 
     #     for image_file in images:
     #         # Load image with PIL for processing
@@ -166,7 +166,7 @@ class FileOperationsViewSet(viewsets.ViewSet):
     #         zip_buffer.seek(0)
     #         response = HttpResponse(zip_buffer, content_type="application/zip")
     #         response['Content-Disposition'] = 'attachment; filename="processed_images.zip"'
-    #         return response
+        return HttpResponse('gubgou')
     
         
     
