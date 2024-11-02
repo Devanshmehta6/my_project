@@ -1,7 +1,7 @@
 from io import BytesIO
 # import cv2
 from django.http import HttpResponse, JsonResponse
-import numpy as np
+# import numpy as np
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework import status
