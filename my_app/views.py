@@ -73,100 +73,100 @@ class FileOperationsViewSet(viewsets.ViewSet):
             if os.path.exists(zip_filepath):
                 os.remove(zip_filepath)
 
-    def merge_pdfs(self, pdf_files):
-        # Initialize PdfMerger
-        merger = PyPDF2.PdfMerger()
+    # def merge_pdfs(self, pdf_files):
+    #     # Initialize PdfMerger
+    #     merger = PyPDF2.PdfMerger()
 
-        # Append each uploaded PDF file
-        for pdf in pdf_files:
-            merger.append(pdf)
+    #     # Append each uploaded PDF file
+    #     for pdf in pdf_files:
+    #         merger.append(pdf)
 
-        # Create the merged PDF in memory
-        output_filename = 'merged_output.pdf'
-        output_path = default_storage.path(output_filename)
-        with open(output_path, 'wb') as output_pdf:
-            merger.write(output_pdf)
+    #     # Create the merged PDF in memory
+    #     output_filename = 'merged_output.pdf'
+    #     output_path = default_storage.path(output_filename)
+    #     with open(output_path, 'wb') as output_pdf:
+    #         merger.write(output_pdf)
 
-        return output_path
+    #     return output_path
     
-    @action(detail=False, methods=['post'])
-    def mergePDF(self, request):
-        if request.method == 'POST':
-            pdf_files = request.FILES.getlist('files')
-            if not pdf_files:
-                return JsonResponse({"error": "No files provided"}, status=400)
+    # @action(detail=False, methods=['post'])
+    # def mergePDF(self, request):
+    #     if request.method == 'POST':
+    #         pdf_files = request.FILES.getlist('files')
+    #         if not pdf_files:
+    #             return JsonResponse({"error": "No files provided"}, status=400)
 
-                # Merge the PDF files
-            try:
-                merged_pdf_path = self.merge_pdfs(pdf_files)
-            except Exception as e:
-                return JsonResponse({"error": str(e)}, status=500)
+    #             # Merge the PDF files
+    #         try:
+    #             merged_pdf_path = self.merge_pdfs(pdf_files)
+    #         except Exception as e:
+    #             return JsonResponse({"error": str(e)}, status=500)
 
-                # Return the merged PDF as a downloadable response
-            with open(merged_pdf_path, 'rb') as merged_pdf:
-                response = HttpResponse(merged_pdf.read(), content_type='application/pdf')
-                response['Content-Disposition'] = 'attachment; filename="merged_output.pdf"'
-                return response
+    #             # Return the merged PDF as a downloadable response
+    #         with open(merged_pdf_path, 'rb') as merged_pdf:
+    #             response = HttpResponse(merged_pdf.read(), content_type='application/pdf')
+    #             response['Content-Disposition'] = 'attachment; filename="merged_output.pdf"'
+    #             return response
     
     
-    @action(detail=False, methods=['post'])
-    def detect_face(request):
-        images = request.FILES.getlist('images')
-        processed_images = []
+    # @action(detail=False, methods=['post'])
+    # def detect_face(self, request):
+    #     images = request.FILES.getlist('images')
+    #     processed_images = []
 
-        # Load the pre-trained face detection model
-        face_cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-        face_cascade = cv2.CascadeClassifier(face_cascade_path)
+    #     # Load the pre-trained face detection model
+    #     face_cascade_path = cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+    #     face_cascade = cv2.CascadeClassifier(face_cascade_path)
 
-        for image_file in images:
-            # Load image with PIL for processing
-            input_image = Image.open(image_file)
+    #     for image_file in images:
+    #         # Load image with PIL for processing
+    #         input_image = Image.open(image_file)
 
-            # Convert to OpenCV format for face detection
-            img_cv = cv2.cvtColor(np.array(input_image), cv2.COLOR_RGB2BGR)
-            gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
+    #         # Convert to OpenCV format for face detection
+    #         img_cv = cv2.cvtColor(np.array(input_image), cv2.COLOR_RGB2BGR)
+    #         gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
 
-            # Detect faces
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    #         # Detect faces
+    #         faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
-            if len(faces) > 0:
-                # Convert the PIL image to bytes for rembg
-                input_buffer = BytesIO()
-                input_image.save(input_buffer, format="PNG")
-                input_bytes = input_buffer.getvalue()
+    #         if len(faces) > 0:
+    #             # Convert the PIL image to bytes for rembg
+    #             input_buffer = BytesIO()
+    #             input_image.save(input_buffer, format="PNG")
+    #             input_bytes = input_buffer.getvalue()
 
-                # Remove background using rembg and read back as a PIL image
-                output_image_bytes = remove(input_bytes)
-                output_image = Image.open(BytesIO(output_image_bytes)).convert("RGBA")
+    #             # Remove background using rembg and read back as a PIL image
+    #             output_image_bytes = remove(input_bytes)
+    #             output_image = Image.open(BytesIO(output_image_bytes)).convert("RGBA")
 
-                # Add a white background
-                white_bg = Image.new("RGBA", output_image.size, "WHITE")
-                output_image = Image.alpha_composite(white_bg, output_image).convert("RGB")
-            else:
-                # Keep the original image if no face is detected
-                output_image = input_image.convert("RGB")
+    #             # Add a white background
+    #             white_bg = Image.new("RGBA", output_image.size, "WHITE")
+    #             output_image = Image.alpha_composite(white_bg, output_image).convert("RGB")
+    #         else:
+    #             # Keep the original image if no face is detected
+    #             output_image = input_image.convert("RGB")
             
-            output_buffer = BytesIO()
-            output_image.save(output_buffer, format="JPEG", quality=85)
-            output_buffer.seek(0)
-            processed_images.append((f"processed_{image_file.name}", output_buffer))
+    #         output_buffer = BytesIO()
+    #         output_image.save(output_buffer, format="JPEG", quality=85)
+    #         output_buffer.seek(0)
+    #         processed_images.append((f"processed_{image_file.name}", output_buffer))
 
-        if len(processed_images) == 1:
-            # Return single image as a downloadable file
-            filename, image_buffer = processed_images[0]
-            response = HttpResponse(image_buffer, content_type="image/jpeg")
-            response['Content-Disposition'] = f'attachment; filename="{filename}"'
-            return response
-        else:
-                # Create a ZIP file if multiple images
-            zip_buffer = BytesIO()
-            with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-                for filename, image_buffer in processed_images:
-                    zip_file.writestr(filename, image_buffer.getvalue())
-            zip_buffer.seek(0)
-            response = HttpResponse(zip_buffer, content_type="application/zip")
-            response['Content-Disposition'] = 'attachment; filename="processed_images.zip"'
-            return response
+    #     if len(processed_images) == 1:
+    #         # Return single image as a downloadable file
+    #         filename, image_buffer = processed_images[0]
+    #         response = HttpResponse(image_buffer, content_type="image/jpeg")
+    #         response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    #         return response
+    #     else:
+    #             # Create a ZIP file if multiple images
+    #         zip_buffer = BytesIO()
+    #         with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+    #             for filename, image_buffer in processed_images:
+    #                 zip_file.writestr(filename, image_buffer.getvalue())
+    #         zip_buffer.seek(0)
+    #         response = HttpResponse(zip_buffer, content_type="application/zip")
+    #         response['Content-Disposition'] = 'attachment; filename="processed_images.zip"'
+    #         return response
     
         
     
