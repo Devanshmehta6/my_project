@@ -1,4 +1,4 @@
-from io import BytesIO
+# from io import BytesIO
 # import cv2
 from django.http import HttpResponse, JsonResponse
 # import numpy as np
@@ -13,9 +13,9 @@ from django.core.files.storage import default_storage
 from rest_framework import viewsets, status
 import PyPDF2
 
-import rembg
-from rembg import remove
-from PIL import Image
+# import rembg
+# from rembg import remove
+# from PIL import Image
 
 class FileOperationsViewSet(viewsets.ViewSet):
     
