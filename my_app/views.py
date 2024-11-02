@@ -73,40 +73,40 @@ class FileOperationsViewSet(viewsets.ViewSet):
             if os.path.exists(zip_filepath):
                 os.remove(zip_filepath)
 
-    # def merge_pdfs(self, pdf_files):
-    #     # Initialize PdfMerger
-    #     merger = PyPDF2.PdfMerger()
+    def merge_pdfs(self, pdf_files):
+        # Initialize PdfMerger
+        merger = PyPDF2.PdfMerger()
 
-    #     # Append each uploaded PDF file
-    #     for pdf in pdf_files:
-    #         merger.append(pdf)
+        # Append each uploaded PDF file
+        for pdf in pdf_files:
+            merger.append(pdf)
 
-    #     # Create the merged PDF in memory
-    #     output_filename = 'merged_output.pdf'
-    #     output_path = default_storage.path(output_filename)
-    #     with open(output_path, 'wb') as output_pdf:
-    #         merger.write(output_pdf)
+        # Create the merged PDF in memory
+        output_filename = 'merged_output.pdf'
+        output_path = default_storage.path(output_filename)
+        with open(output_path, 'wb') as output_pdf:
+            merger.write(output_pdf)
 
-    #     return output_path
+        return output_path
     
-    # @action(detail=False, methods=['post'])
-    # def mergePDF(self, request):
-    #     if request.method == 'POST':
-    #         pdf_files = request.FILES.getlist('files')
-    #         if not pdf_files:
-    #             return JsonResponse({"error": "No files provided"}, status=400)
+    @action(detail=False, methods=['post'])
+    def mergePDF(self, request):
+        if request.method == 'POST':
+            pdf_files = request.FILES.getlist('files')
+            if not pdf_files:
+                return JsonResponse({"error": "No files provided"}, status=400)
 
-    #             # Merge the PDF files
-    #         try:
-    #             merged_pdf_path = self.merge_pdfs(pdf_files)
-    #         except Exception as e:
-    #             return JsonResponse({"error": str(e)}, status=500)
+                # Merge the PDF files
+            try:
+                merged_pdf_path = self.merge_pdfs(pdf_files)
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=500)
 
-    #             # Return the merged PDF as a downloadable response
-    #         with open(merged_pdf_path, 'rb') as merged_pdf:
-    #             response = HttpResponse(merged_pdf.read(), content_type='application/pdf')
-    #             response['Content-Disposition'] = 'attachment; filename="merged_output.pdf"'
-    #             return response
+                # Return the merged PDF as a downloadable response
+            with open(merged_pdf_path, 'rb') as merged_pdf:
+                response = HttpResponse(merged_pdf.read(), content_type='application/pdf')
+                response['Content-Disposition'] = 'attachment; filename="merged_output.pdf"'
+                return response
     
     
     # @action(detail=False, methods=['post'])
